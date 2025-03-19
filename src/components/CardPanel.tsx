@@ -1,66 +1,76 @@
-"use client"
+"use client";
 import { useReducer } from "react";
-import Card from "./Card";
+import Card from "@/components/Card";
 import Link from "next/link";
 
-export default function CardPanel(){
-    const listReducer = (list:Map<string, number>, action:{type:string, venueName:string, value:number}) => {
-        switch(action.type){
-            case 'add': {
-                const newList = new Map(list);
-                newList.set(action.venueName, action.value);
-                return newList;
-            }
-            case 'remove': {
-                const newList = new Map(list);
-                newList.delete(action.venueName);
-                return newList;
-            }
-            default: return list;
-        }
+export default function CardPanel() {
+  const defaultVenue = new Map([
+    ["The Bloom Pavilion", 0],
+    ["Spark Space", 0],
+    ["The Grand Table", 0],
+  ]);
+
+  const cardReducer = (
+    venueList: Map<string, number>,
+    action: { type: string; venueName: string; rating?: number }
+  ) => {
+    switch (action.type) {
+      case "add": {
+        const newVenueList = new Map(venueList);
+        newVenueList.set(action.venueName, action.rating ?? 0);
+        return newVenueList;
+      }
+      case "remove": {
+        const newVenueList = new Map(venueList);
+        newVenueList.delete(action.venueName);
+        return newVenueList;
+      }
+      default:
+        return venueList;
     }
-    const initialMap = new Map<string, number>([
-        ["The Bloom Pavilion", 0],
-        ["Spark Space", 0],
-        ["The Grand Table", 0]
-    ]);
+  };
 
-      
-    const [ mapList, dispatchCompare ] = useReducer(listReducer, initialMap);
-    
-    /*
-     * Mock Data for Demontration only 
-     */
-    const mockVenueRepo = [
-        {vid: "001", name: "The Bloom Pavilion", image: "/img/bloom.jpg"},
-        {vid: "002", name: "Spark Space", image: "/img/sparkspace.jpg"},
-        {vid: "003", name: "The Grand Table", image: "/img/grandtable.jpg"}
-    ]
+  const [venueList, dispatch] = useReducer(cardReducer, defaultVenue);
 
-    return(
-        <div>
-            <div style={{margin:"20px", display:"flex", flexDirection:"row", flexWrap:"wrap", justifyContent:"space-around", alignContent:"space-around", gap: "20px"}}>
-                {/* <Card venueName="The Bloom Pavilion" imgSrc="/img/bloom.jpg" onUpdateList={(name: string, value: number) => dispatchCompare({ type: "add", venueName: name, value: value })}/>
-                <Card venueName="Spark Space" imgSrc="/img/sparkspace.jpg" onUpdateList={(name: string, value: number) => dispatchCompare({ type: "add", venueName: name, value: value })}/>
-                <Card venueName="The Grand Table" imgSrc="/img/grandtable.jpg" onUpdateList={(name: string, value: number) => dispatchCompare({ type: "add", venueName: name, value: value })}/> */}
-                {
-                    mockVenueRepo.map((venueItem) => (
-                        <Link key={venueItem.vid}  href={`/venue/${venueItem.vid}`}>
-                            <Card venueName={venueItem.name} imgSrc={venueItem.image} 
-                                onUpdateList={(name: string, value: number) => dispatchCompare({ type: "add", venueName: name, value: value })}
-                            />
-                        </Link>
-                    ))
-                }
-            </div>
-            <div>
-                <b>Venue List with Ratings : {3}</b>
-                {Array.from(mapList.entries()).map(([venueName, rating]) => (
-                    <p key={venueName} data-testid={venueName} onClick={()=> dispatchCompare({ type: "remove", venueName: venueName, value: rating })} className="hover:cursor-pointer">
-                        {venueName}: {rating}
-                    </p>
-                ))}
-            </div>
-        </div>
-    )
+  //mock
+  const mockCardRepo = [
+    { cid: "001", name: "The Bloom Pavilion", image: "/image/bloom.jpg" },
+    { cid: "002", name: "Spark Space", image: "/image/sparkspace.jpg" },
+    { cid: "003", name: "The Grand Table", image: "/image/grandtable.jpg" },
+  ];
+
+  return (
+    <div>
+      <div className="flex flex-wrap justify-around gap-4 m-5">
+        {mockCardRepo.map((cardItem) => (
+          <Link href={`/venue/${cardItem.cid}`} className="w-1/5">
+            <Card
+              venueName={cardItem.name}
+              imgSrc={cardItem.image}
+              rating={venueList.get(cardItem.name) || 0}
+              onRatingChange={(venue: string, rating: number) =>
+                dispatch({ type: "add", venueName: venue, rating })
+              }
+            />
+          </Link>
+        ))}
+      </div>
+
+      <div className="w-full text-xl font-medium mb-4 text-black">
+        Venue List with Rating: {venueList.size}
+      </div>
+      <div className="p-4">
+        {Array.from(venueList).map(([venueName, rating]) => (
+          <div
+            key={venueName}
+            data-testid={venueName}
+            onClick={() => dispatch({ type: "remove", venueName: venueName })}
+            className="cursor-pointer text-black"
+          >
+            {venueName}: {rating}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }

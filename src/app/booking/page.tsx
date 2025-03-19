@@ -1,25 +1,21 @@
-import DateReserve from "@/components/DateReserve";
-import { Select, MenuItem, TextField } from "@mui/material";
+import LocationDateReserve from "@/components/DateReserve";
 
-export default function BookingPage() {
-    return (
-    <main>
-        <h1 className='text-3xl font-bold text-center mt-10 mb-5'>Venue Booking</h1>
-        
-        <form className="flex flex-col max-w-md mx-auto space-y-5 p-5">  
-            <TextField variant="standard" name="Name-Lastname" label="Name-Lastname" placeholder="Enter your name"></TextField>
-            <TextField variant="standard" name="Contact-Number" label="Contact-Number" placeholder="Enter contact number"></TextField>
-            <Select variant="standard" id="venue" className="h-12">
-                    <MenuItem value="Bloom">The Bloom Pavilion</MenuItem>
-                    <MenuItem value="Spark">Spark Space</MenuItem>
-                    <MenuItem value="GrandTable">The Grand Table</MenuItem>
-            </Select>
+export default function Booking() {
+  return (
+    <main className="w-[100%] flex flex-col items-center space-y-5 text-black">
+      <div className="text-xl font-medium space-y-10 ">Reserve Event Room</div>
 
-            <DateReserve />
+      <div className="w-fit space-y-2">
+        <div className="text-md text-left text-gray-600">Select your dates</div>
+        <LocationDateReserve />
+      </div>
 
-            <button name="Book Venue" type="submit" className="rounded bg-[#055D70] text-white font-medium h-14 hover:bg-[#277381]">Book Venue</button>
-        </form>
-
+      <button
+        name="Book Venue"
+        className="block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-2 text-white shadow-small"
+      >
+        Book Venue
+      </button>
     </main>
-    );
-  }
+  );
+}
